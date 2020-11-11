@@ -63,6 +63,6 @@ class MovieWorld:
                 return dvd
 
     def __repr__(self):
-        customers = list(map(str, self.customers))
+        customers = list(map(str, self.customers))   # customers = list(map(lambda c: str(c), self.customers))
         dvds = list(map(str, self.dvds))
         return "\n".join(customers + dvds)
