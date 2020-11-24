@@ -12,6 +12,11 @@ class Animal(ABC):
     def make_sound(self):
         pass
 
+    @property
+    @abstractmethod
+    def gaining(self):
+        pass
+
     def feed(self, food: Food):
         can_be_feed = True
 
@@ -30,10 +35,6 @@ class Animal(ABC):
         else:
             return f"{type(self).__name__} does not eat {type(food).__name__}!"
 
-    @property
-    @abstractmethod
-    def gaining(self):
-        pass
 
 
 class Mammal(Animal):
