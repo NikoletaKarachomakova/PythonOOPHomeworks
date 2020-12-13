@@ -10,9 +10,8 @@ class Vehicle(ABC):
     def drive(self, distance):
         needed_fuel = distance * (self.fuel_consumption + self.SUMMER_ADD_CONSUMPTION)
 
-        if self.fuel_quantity > needed_fuel:
+        if self.fuel_quantity >= needed_fuel:
             self.fuel_quantity -= needed_fuel
-        return
 
     @abstractmethod
     def refuel(self, fuel):
@@ -22,12 +21,9 @@ class Vehicle(ABC):
     @abstractmethod
     def SUMMER_ADD_CONSUMPTION(self):
         pass
-    # we are saying that every other class should have this parameter. Property helps us to access it like an attribute.(getter)
-    # we can move the whole implementation of drive method into class Vehicle. If we do this, we will not repeat the method.
-    # we will not change anything for this method in the other classes.
-    # so there is no need method "drive" to be an abstract one. It can be just a method.
-    # if we keep it as an abstract, we should initialize it in the other classes. To call it with super() function.
 
+# There is another solution to this task w/o property. We can just write pass in the abstractmethods drive and refuel_>
+# And we can implement the logic of the methods in the child classes using hardociding of the var(summer_consumption and fuel leakage)
 
 class Car(Vehicle):
     SUMMER_ADD_CONSUMPTION = 0.9
@@ -49,14 +45,45 @@ class Truck(Vehicle):
         super().refuel(fuel * 0.95)
 
 
-car = Car(20, 5)
-car.drive(3)
-print(car.fuel_quantity)
-car.refuel(10)
-print(car.fuel_quantity)
-truck = Truck(100, 15)
-truck.drive(5)
-print(truck.fuel_quantity)
-truck.refuel(50)
-print(truck.fuel_quantity)
+import unittest
 
+
+class TestCar(unittest.TestCase):
+    def setUp(self):
+        self.car = Car(100, 2)
+    #This is the arrange part. We are creating an instance of the class like property.
+    #Everytime we run a test, it will guarantee us that we will use the original data of the obj.
+    # It will not save the data from the previous test.
+
+    def test_car_drive_with_enough_fuel(self):
+        self.car.drive(10)
+        self.assertEqual(self.car.fuel_quantity, 71)
+
+    def test_car_drive_with_not_enough_fuel(self):
+        self.car.drive(60)
+        self.assertEqual(self.car.fuel_quantity, 100)
+
+    def test_car_refuel(self):
+        self.car.refuel(10)
+        self.assertEqual(self.car.fuel_quantity, 110)
+
+
+class TestTruck(unittest.TestCase):
+    def setUp(self):
+        self.truck = Truck(100, 5)
+
+    def test_truck_drive_with_enough_fuel(self):
+        self.truck.drive(10)
+        self.assertEqual(self.truck.fuel_quantity, 34)
+
+    def test_truck_drive_with_not_enough_fuel(self):
+        self.truck.drive(60)
+        self.assertEqual(self.truck.fuel_quantity, 100)
+
+    def test_truck_refuel(self):
+        self.truck.refuel(10)
+        self.assertEqual(self.truck.fuel_quantity, 109.5)
+
+
+if __name__ == "__main__":
+    unittest.main()
